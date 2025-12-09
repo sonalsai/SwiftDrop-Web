@@ -12,7 +12,7 @@ const Sidebar = () => {
       sx={{
         width: "5%",
         height: "100dvh",
-        backgroundColor: "var(--primary-color)",
+        backgroundColor: "var(--secondary-color)  ",
         padding: "32px 0",
         alignItems: "center",
         justifyContent: "space-between",
