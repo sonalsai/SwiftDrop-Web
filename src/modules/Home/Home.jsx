@@ -53,7 +53,7 @@ const Home = () => {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        minHeight: "400px",
         backgroundColor: "var(--background-color)",
         display: "flex",
         flexDirection: "column",
@@ -70,7 +70,7 @@ const Home = () => {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          padding: "0 32px 64px",
+          padding: "32px",
           maxWidth: "1440px",
           margin: "0 auto",
           width: "100%",

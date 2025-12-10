@@ -18,73 +18,121 @@ const Navbar = () => {
     <Box
       component="nav"
       sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "20px 48px",
-        backgroundColor: "var(--white)",
-        borderBottom: "1px solid var(--border-light)",
-        boxShadow: "0 2px 8px var(--shadow-sm)",
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
+        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        backdropFilter: "blur(12px)",
+        borderBottom: "1px solid rgba(230, 235, 240, 0.6)",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.02)",
       }}
     >
-      {/* Logo */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: "12px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px 32px",
+          maxWidth: "1440px",
+          margin: "0 auto",
+          width: "100%",
+        }}
+      >
+        {/* Logo */}
         <Box
+          onClick={() => navigate("/home")}
           sx={{
-            width: "40px",
-            height: "40px",
-            borderRadius: "10px",
-            background:
-              "linear-gradient(135deg, var(--primary-blue) 0%, #0D47A1 100%)",
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            gap: "12px",
             cursor: "pointer",
+            transition: "transform 0.2s ease",
+            "&:hover": {
+              transform: "scale(1.02)",
+            },
           }}
-          onClick={() => navigate("/home")}
         >
-          <SendOutlined
-            sx={{ color: "white", fontSize: 24, transform: "rotate(-45deg)" }}
-          />
-        </Box>
-        <Typography
-          variant="h5"
-          sx={{
-            color: "var(--text-dark)",
-            fontFamily: "var(--font-primary)",
-            fontWeight: "var(--font-weight-bold)",
-            letterSpacing: "-0.5px",
-            cursor: "pointer",
-          }}
-          onClick={() => navigate("/home")}
-        >
-          SwiftDrop
-        </Typography>
-      </Box>
-
-      {/* Navigation Links */}
-      <Box sx={{ display: "flex", gap: "32px", alignItems: "center" }}>
-        {navItems.map((item) => (
-          <Typography
-            key={item.path}
-            onClick={() => navigate(item.path)}
+          <Box
             sx={{
-              color: isActive(item.path)
-                ? "var(--primary-blue)"
-                : "var(--text-dark)",
-              fontWeight: isActive(item.path)
-                ? "var(--font-weight-semibold)"
-                : "var(--font-weight-medium)",
-              cursor: "pointer",
-              transition: "var(--transition-fast)",
-              "&:hover": {
-                color: isActive(item.path) ? "#0D47A1" : "var(--primary-blue)",
-              },
+              width: "42px",
+              height: "42px",
+              borderRadius: "12px",
+              background:
+                "linear-gradient(135deg, var(--primary-blue) 0%, #0D47A1 100%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(26, 115, 232, 0.3)",
             }}
           >
-            {item.label}
+            <SendOutlined
+              sx={{
+                color: "white",
+                fontSize: 22,
+                transform: "rotate(-45deg) translate(2px, 0)",
+              }}
+            />
+          </Box>
+          <Typography
+            variant="h5"
+            sx={{
+              background:
+                "linear-gradient(135deg, var(--text-dark) 0%, #3e4e68 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontFamily: "var(--font-primary)",
+              fontWeight: 800,
+              letterSpacing: "-0.5px",
+            }}
+          >
+            SwiftDrop
           </Typography>
-        ))}
+        </Box>
+
+        {/* Navigation Links */}
+        <Box
+          sx={{
+            display: "flex",
+            gap: "8px",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.03)",
+            padding: "6px",
+            borderRadius: "50px",
+          }}
+        >
+          {navItems.map((item) => {
+            const active = isActive(item.path);
+            return (
+              <Box
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                sx={{
+                  padding: "10px 24px",
+                  borderRadius: "30px",
+                  cursor: "pointer",
+                  backgroundColor: active ? "white" : "transparent",
+                  boxShadow: active ? "0 4px 12px rgba(0, 0, 0, 0.05)" : "none",
+                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                  "&:hover": {
+                    backgroundColor: active ? "white" : "rgba(0, 0, 0, 0.04)",
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: active
+                      ? "var(--primary-blue)"
+                      : "var(--text-secondary)",
+                    fontWeight: active ? 700 : 500,
+                    fontSize: "15px",
+                  }}
+                >
+                  {item.label}
+                </Typography>
+              </Box>
+            );
+          })}
+        </Box>
       </Box>
     </Box>
   );
