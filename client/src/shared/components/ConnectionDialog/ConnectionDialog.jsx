@@ -8,8 +8,10 @@ import {
   TextField,
   Typography,
   Box,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
-import { Link, LinkOff } from "@mui/icons-material";
+import { Link, LinkOff, ContentPaste } from "@mui/icons-material";
 import PropTypes from "prop-types";
 
 const ConnectionDialog = ({ open, onClose, onConnect }) => {
@@ -88,6 +90,39 @@ const ConnectionDialog = ({ open, onClose, onConnect }) => {
                   .slice(0, 6);
                 setConnectionCode(formattedValue);
               }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={async () => {
+                        try {
+                          const text = await navigator.clipboard.readText();
+                          const formattedValue = text
+                            .replace(/[^a-zA-Z0-9]/g, "")
+                            .toUpperCase()
+                            .slice(0, 6);
+                          setConnectionCode(formattedValue);
+                        } catch (err) {
+                          console.error("Failed to read clipboard:", err);
+                        }
+                      }}
+                      edge="end"
+                    >
+                      <ContentPaste />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                sx: {
+                  borderRadius: "16px",
+                  backgroundColor: "#F8F9FA",
+                  "& fieldset": { borderColor: "#E0E0E0" },
+                  "&:hover fieldset": { borderColor: "var(--primary-blue)" },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "var(--primary-blue)",
+                    borderWidth: "2px",
+                  },
+                },
+              }}
               inputProps={{
                 style: {
                   textAlign: "center",
@@ -99,22 +134,8 @@ const ConnectionDialog = ({ open, onClose, onConnect }) => {
                 maxLength: 6,
                 spellCheck: false,
               }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "16px",
-                  backgroundColor: "#F8F9FA",
-                  "& fieldset": {
-                    borderColor: "#E0E0E0",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "var(--primary-blue)",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "var(--primary-blue)",
-                    borderWidth: "2px",
-                  },
-                },
-              }}
+              // Removed sx prop since styling is now in InputProps
+              variant="outlined"
             />
           </form>
         </DialogContent>
