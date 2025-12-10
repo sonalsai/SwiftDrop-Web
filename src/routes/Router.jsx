@@ -3,15 +3,15 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import App from "./App";
-import Home from "./modules/Home/Home";
-import History from "./modules/History/History";
-import Profile from "./modules/Profile/Profile";
+import MainLayout from "../layouts/MainLayout";
+import Home from "../modules/Home/Home";
+import History from "../modules/History/History";
+import Profile from "../modules/Profile/Profile";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <MainLayout />,
     children: [
       {
         index: true,

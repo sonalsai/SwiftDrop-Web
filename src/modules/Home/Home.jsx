@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import { useState } from "react";
 import {
-  Navbar,
   HeroSection,
   FileUploadZone,
   ConnectionArea,
@@ -60,8 +59,6 @@ const Home = () => {
         flexDirection: "column",
       }}
     >
-      <Navbar />
-
       <HeroSection
         title="Instant Peer-to-Peer Sharing"
         subtitle="Share files instantly via secure P2P connection. No uploads, no limits, just pure speed."

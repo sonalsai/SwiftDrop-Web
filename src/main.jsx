@@ -1,15 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import "./index.css";
-import Router from "./Router.jsx";
-
-import { ThemeProvider, createTheme } from "@mui/material/styles";
-
-const theme = createTheme({
-  palette: {
-    mode: "light",
-  },
-});
+import "./styles/index.css";
+import Router from "./routes/Router";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./core/theme";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
