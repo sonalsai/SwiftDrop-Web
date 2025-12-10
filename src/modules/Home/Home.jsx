@@ -1,8 +1,3 @@
-import {
-  CloudUploadOutlined,
-  SendOutlined,
-  CheckCircleOutline,
-} from "@mui/icons-material";
 import { Box } from "@mui/material";
 import { useState } from "react";
 import {
@@ -10,7 +5,6 @@ import {
   HeroSection,
   FileUploadZone,
   ConnectionArea,
-  StepIndicator,
 } from "../../shared/components";
 
 const Home = () => {
@@ -41,30 +35,21 @@ const Home = () => {
     if (files.length > 0) {
       setSelectedFile(files[0]);
     }
+    e.target.value = "";
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+  };
+
+  const handleSendFile = () => {
+    console.log("Sending file:", selectedFile);
   };
 
   const handleConnect = () => {
     console.log("Connecting to receiver...");
     // TODO: Implement connection logic
   };
-
-  const steps = [
-    {
-      step: "1",
-      title: "Choose or drag file",
-      icon: <CloudUploadOutlined />,
-    },
-    {
-      step: "2",
-      title: "Connect to receiver",
-      icon: <SendOutlined />,
-    },
-    {
-      step: "3",
-      title: "Transfer",
-      icon: <CheckCircleOutline />,
-    },
-  ];
 
   return (
     <Box
@@ -86,12 +71,13 @@ const Home = () => {
         sx={{
           flex: 1,
           display: "flex",
-          flexDirection: "column",
+          flexDirection: "row",
           alignItems: "center",
           padding: "0 32px 64px",
-          maxWidth: "1000px",
+          maxWidth: "1440px",
           margin: "0 auto",
           width: "100%",
+          gap: "32px",
         }}
       >
         <FileUploadZone
@@ -101,11 +87,11 @@ const Home = () => {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onFileSelect={handleFileSelect}
+          onRemoveFile={handleRemoveFile}
+          onSendFile={handleSendFile}
         />
 
         <ConnectionArea onConnect={handleConnect} />
-
-        <StepIndicator steps={steps} activeStep={0} />
       </Box>
     </Box>
   );

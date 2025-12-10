@@ -1,4 +1,4 @@
-import { QrCode2Outlined, SendOutlined } from "@mui/icons-material";
+import { SendOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import PropTypes from "prop-types";
 
@@ -7,90 +7,93 @@ const ConnectionArea = ({ onConnect }) => {
     <Box
       sx={{
         width: "100%",
-        marginTop: "32px",
-        padding: "32px",
-        borderRadius: "var(--radius-lg)",
-        backgroundColor: "var(--white)",
-        border: "1px solid var(--border-light)",
-        boxShadow: "0 2px 8px var(--shadow-sm)",
+        height: "424px",
+        padding: "64px 48px",
+        borderRadius: "20px",
+        backgroundColor: "#F9FBFF",
+        border: "2px dashed #D8E3F0",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        transition: "0.3s ease",
+        "&:hover": {
+          borderColor: "#AAC8E8",
+          backgroundColor: "#F4F8FF",
+        },
       }}
     >
-      <Typography
-        variant="h6"
-        sx={{
-          color: "var(--text-dark)",
-          fontWeight: "var(--font-weight-semibold)",
-          marginBottom: "16px",
-          textAlign: "center",
-        }}
-      >
-        Waiting for connection...
-      </Typography>
-
+      {/* Large Icon */}
       <Box
         sx={{
+          width: "100px",
+          height: "100px",
+          borderRadius: "50%",
+          background: "#4be3c12e",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: "24px",
-          flexWrap: "wrap",
+          mb: 3,
+          transition: "0.3s ease",
+          "&:hover": {
+            transform: "scale(1.08)",
+            background: "#4be3c147",
+          },
         }}
       >
-        <Box
-          sx={{
-            padding: "24px",
-            borderRadius: "var(--radius-md)",
-            backgroundColor: "var(--soft-background)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "12px",
-          }}
-        >
-          <QrCode2Outlined
-            sx={{ fontSize: 80, color: "var(--primary-blue)" }}
-          />
-          <Typography
-            sx={{
-              color: "#5F6368",
-              fontSize: "14px",
-              fontWeight: "var(--font-weight-medium)",
-            }}
-          >
-            Scan to connect
-          </Typography>
-        </Box>
-
-        <Typography
-          sx={{ color: "#5F6368", fontWeight: "var(--font-weight-medium)" }}
-        >
-          or
-        </Typography>
-
-        <Button
-          variant="contained"
-          startIcon={<SendOutlined />}
-          onClick={onConnect}
-          sx={{
-            backgroundColor: "var(--success-accent)",
-            color: "var(--text-dark)",
-            padding: "14px 32px",
-            borderRadius: "var(--radius-md)",
-            fontSize: "16px",
-            fontWeight: "var(--font-weight-semibold)",
-            textTransform: "none",
-            boxShadow: "0 4px 12px rgba(75, 227, 193, 0.3)",
-            transition: "all var(--transition-fast)",
-            "&:hover": {
-              backgroundColor: "#3DD4B3",
-              transform: "scale(1.03)",
-              boxShadow: "0 6px 16px rgba(75, 227, 193, 0.4)",
-            },
-          }}
-        >
-          Connect to Receiver
-        </Button>
+        <SendOutlined sx={{ fontSize: "40px", color: "#0B1B36" }} />
       </Box>
+
+      {/* Title */}
+      <Typography
+        sx={{
+          color: "#0B1B36",
+          fontWeight: 600,
+          marginBottom: "8px",
+          fontSize: "20px",
+        }}
+      >
+        Connect to Receiver
+      </Typography>
+
+      {/* Subtitle */}
+      <Typography
+        sx={{
+          color: "#6A7B91",
+          marginBottom: "32px",
+          fontSize: "15px",
+          textAlign: "center",
+          maxWidth: "80%",
+        }}
+      >
+        Enter the connection code shared by the receiver to start the secure P2P
+        session.
+      </Typography>
+
+      {/* Button */}
+      <Button
+        variant="contained"
+        startIcon={<SendOutlined />}
+        onClick={onConnect}
+        sx={{
+          background: "linear-gradient(90deg, #4be3c1 0%, #37d7b1 100%)",
+          color: "#0b1b36",
+          padding: "14px 34px",
+          borderRadius: "12px",
+          fontSize: "16px",
+          fontWeight: 600,
+          textTransform: "none",
+          boxShadow: "0 4px 14px rgba(75, 227, 193, 0.35)",
+          transition: "0.25s ease",
+          "&:hover": {
+            background: "#37d7b1",
+            transform: "translateY(-2px)",
+            boxShadow: "0 6px 18px rgba(75, 227, 193, 0.45)",
+          },
+        }}
+      >
+        Enter connection code
+      </Button>
     </Box>
   );
 };
