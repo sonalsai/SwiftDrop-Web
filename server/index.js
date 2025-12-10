@@ -101,4 +101,4 @@ function broadcastToRoom(room, message, exceptWs) {
     logger.info({ room, messageType: message.type, recipients: count }, "Broadcast complete");
 }
 
-logger.info("Signaling server is ready and listening on ws://localhost:3001");
+logger.info("Signaling server is ready and listening");

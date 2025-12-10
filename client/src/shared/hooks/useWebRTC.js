@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
-const WS_SIGNALING_URL = "ws://localhost:3001";
+const WS_SIGNALING_URL = import.meta.env.VITE_WS_SIGNALING_URL;
 const CHUNK_SIZE = 16 * 1024; // 16 KB
 
 export const useWebRTC = () => {
