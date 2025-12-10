@@ -10,25 +10,26 @@ import {
   Box,
   InputAdornment,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { Link, LinkOff, ContentPaste } from "@mui/icons-material";
 import PropTypes from "prop-types";
 
-const ConnectionDialog = ({ open, onClose, onConnect }) => {
+const ConnectionDialog = ({ open, onClose, onConnect, loading }) => {
   const [connectionCode, setConnectionCode] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (connectionCode.length >= 6) {
       onConnect(connectionCode);
-      setConnectionCode("");
+      // setConnectionCode(""); // Keep code while loading
     }
   };
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={loading ? undefined : onClose} // Prevent close while loading
       PaperProps={{
         sx: {
           borderRadius: "24px",
@@ -82,8 +83,8 @@ const ConnectionDialog = ({ open, onClose, onConnect }) => {
               fullWidth
               placeholder="1A2B3C"
               value={connectionCode}
+              disabled={loading}
               onChange={(e) => {
-                // Allow only alphanumeric characters and convert to uppercase
                 const formattedValue = e.target.value
                   .replace(/[^a-zA-Z0-9]/g, "")
                   .toUpperCase()
@@ -107,6 +108,7 @@ const ConnectionDialog = ({ open, onClose, onConnect }) => {
                         }
                       }}
                       edge="end"
+                      disabled={loading}
                     >
                       <ContentPaste />
                     </IconButton>
@@ -134,7 +136,6 @@ const ConnectionDialog = ({ open, onClose, onConnect }) => {
                 maxLength: 6,
                 spellCheck: false,
               }}
-              // Removed sx prop since styling is now in InputProps
               variant="outlined"
             />
           </form>
@@ -147,6 +148,7 @@ const ConnectionDialog = ({ open, onClose, onConnect }) => {
             onClick={onClose}
             variant="outlined"
             fullWidth
+            disabled={loading}
             sx={{
               borderRadius: "14px",
               padding: "12px",
@@ -167,7 +169,10 @@ const ConnectionDialog = ({ open, onClose, onConnect }) => {
             onClick={handleSubmit}
             variant="contained"
             fullWidth
-            disabled={connectionCode.length < 6}
+            disabled={connectionCode.length < 6 || loading}
+            startIcon={
+              loading && <CircularProgress size={20} color="inherit" />
+            }
             sx={{
               borderRadius: "14px",
               padding: "12px",
@@ -182,7 +187,7 @@ const ConnectionDialog = ({ open, onClose, onConnect }) => {
               },
             }}
           >
-            Connect
+            {loading ? "Connecting..." : "Connect"}
           </Button>
         </DialogActions>
       </Box>
@@ -194,6 +199,7 @@ ConnectionDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onConnect: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
 };
 
 export default ConnectionDialog;

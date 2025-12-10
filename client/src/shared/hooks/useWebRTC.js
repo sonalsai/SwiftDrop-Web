@@ -295,14 +295,26 @@ export const useWebRTC = () => {
         ws.current.onclose = () => log("Signaling disconnected");
     };
 
-    // Wake up the signaling server (Render cold start)
+    // Keep signaling server awake (Render free tier) - Ping every 30s
     useEffect(() => {
         const httpUrl = WS_SIGNALING_URL.replace("ws://", "http://").replace("wss://", "https://");
-        // console.log("Waking up server at:", httpUrl);
-        fetch(httpUrl)
-            .then(res => res.text())
-            // .then(txt => console.log("Server awake:", txt))
-            .catch(err => console.error("Server wake-up failed:", err));
+
+        const pingServer = () => {
+            fetch(httpUrl)
+                .then(res => res.text())
+                .catch(err => {
+                    // Silent fail or minimal error log
+                    // console.error("Server ping failed:", err)
+                });
+        };
+
+        // Initial ping
+        pingServer();
+
+        // Interval
+        const interval = setInterval(pingServer, 30000);
+
+        return () => clearInterval(interval);
     }, []);
 
     const sendFile = (file) => {
@@ -310,6 +322,10 @@ export const useWebRTC = () => {
             log("Data channel not open or no file");
             return;
         }
+
+        // Reset state for new transfer
+        setProgress(0);
+        setStatus("Preparing transfer...");
 
         // 1. Send Offer
         log("Sending file offer...");
@@ -356,12 +372,20 @@ export const useWebRTC = () => {
         pendingTransfer.current = { start: startTransfer };
     };
 
+    const resetState = () => {
+        setProgress(0);
+        setStatus("Idle");
+        setReceivedFile(null);
+        setIncomingFileOffer(null);
+    };
+
     return {
         joinRoom,
         createRoom,
         sendFile,
         acceptFile,
         rejectFile,
+        resetState,
         status,
         receivedFile,
         incomingFileOffer,

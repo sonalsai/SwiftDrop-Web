@@ -7,6 +7,7 @@ import {
   ConnectionDialog,
   WaitingDialog,
   ReceiveDialog,
+  SendDialog,
 } from "../../shared/components";
 import { useWebRTC } from "../../shared/hooks/useWebRTC";
 
@@ -30,6 +31,7 @@ const Home = () => {
     isConnected,
     roomCode,
     hasPeer,
+    resetState,
   } = useWebRTC();
 
   useEffect(() => {
@@ -39,13 +41,13 @@ const Home = () => {
     }
   }, [receivedFile]);
 
-  // When a peer joins, we wait for the DataChannel to open (isConnected) before sending
+  // Auto-send ONLY if we were waiting for the connection dialog (initial flow)
   useEffect(() => {
     if (isConnected && isWaitingDialogOpen) {
       setIsWaitingDialogOpen(false);
-      // Auto-send since we were waiting for this connection
       if (selectedFile) {
         sendFile(selectedFile);
+        setSendDialogOpen(true);
       }
     }
   }, [isConnected, isWaitingDialogOpen, selectedFile, sendFile]);
@@ -91,8 +93,15 @@ const Home = () => {
 
   const handleSendFile = () => {
     if (selectedFile) {
-      createRoom();
-      setIsWaitingDialogOpen(true);
+      if (isConnected) {
+        // If already connected, send immediately
+        sendFile(selectedFile);
+        setSendDialogOpen(true);
+      } else {
+        // If not connected, start room flow
+        createRoom();
+        setIsWaitingDialogOpen(true);
+      }
     }
   };
 
@@ -102,6 +111,7 @@ const Home = () => {
 
   const handleCloseConnectionDialog = () => {
     setIsConnectionDialogOpen(false);
+    setIsConnecting(false);
   };
 
   const handleCloseWaitingDialog = () => {
@@ -109,13 +119,25 @@ const Home = () => {
     // TODO: Ideally leave room here
   };
 
+  const [isConnecting, setIsConnecting] = useState(false);
+
+  // Close connection dialog when connected
+  useEffect(() => {
+    if (isConnected && isConnectionDialogOpen) {
+      setIsConnectionDialogOpen(false);
+      setIsConnecting(false);
+    }
+  }, [isConnected, isConnectionDialogOpen]);
+
   const handleConnect = (code) => {
+    setIsConnecting(true);
     joinRoom(code);
-    setIsConnectionDialogOpen(false);
+    // setIsConnectionDialogOpen(false); // Don't close immediately
   };
 
   const [receiveDialogOpen, setReceiveDialogOpen] = useState(false);
   const [receiveStatus, setReceiveStatus] = useState("request"); // 'request' | 'receiving' | 'completed'
+  const [sendDialogOpen, setSendDialogOpen] = useState(false);
 
   useEffect(() => {
     if (incomingFileOffer) {
@@ -143,6 +165,13 @@ const Home = () => {
       setReceiveDialogOpen(true); // Ensure it's open if it wasn't
     }
   }, [receivedFile]);
+
+  // Removed auto-open logic. now controlled by handleSendFile
+  // useEffect(() => {
+  //     if (selectedFile && isConnected && !incomingFileOffer && !receivedFile) {
+  //         setSendDialogOpen(true);
+  //     }
+  // }, [selectedFile, isConnected, incomingFileOffer, receivedFile]);
 
   const handleDownloadFile = () => {
     if (receivedFile?.url) {
@@ -202,6 +231,7 @@ const Home = () => {
           open={isConnectionDialogOpen}
           onClose={handleCloseConnectionDialog}
           onConnect={handleConnect}
+          loading={isConnecting}
         />
 
         <WaitingDialog
@@ -216,13 +246,36 @@ const Home = () => {
           fileName={
             receivedFile ? receivedFile.name : incomingFileOffer?.filename
           }
-          fileSize={incomingFileOffer?.size} // We might lose size ref on complete, checking...
+          fileSize={incomingFileOffer?.size}
           progress={progress}
           status={receiveStatus}
           onAccept={handleAcceptFile}
           onReject={handleRejectFile}
           onDownload={handleDownloadFile}
-          onClose={() => setReceiveDialogOpen(false)}
+          onClose={() => {
+            setReceiveDialogOpen(false);
+            resetState();
+          }}
+        />
+
+        <SendDialog
+          open={sendDialogOpen}
+          fileName={selectedFile?.name}
+          progress={progress}
+          status={
+            status === "File rejected"
+              ? "rejected"
+              : progress === 100
+              ? "completed"
+              : progress > 0
+              ? "sending"
+              : "waiting"
+          }
+          onClose={() => {
+            setSendDialogOpen(false);
+            setSelectedFile(null);
+            resetState();
+          }}
         />
       </Box>
     </Box>
