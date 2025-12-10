@@ -4,11 +4,13 @@ import {
   HeroSection,
   FileUploadZone,
   ConnectionArea,
+  ConnectionDialog,
 } from "../../shared/components";
 
 const Home = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [isConnectionDialogOpen, setIsConnectionDialogOpen] = useState(false);
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -45,9 +47,18 @@ const Home = () => {
     console.log("Sending file:", selectedFile);
   };
 
-  const handleConnect = () => {
-    console.log("Connecting to receiver...");
-    // TODO: Implement connection logic
+  const handleOpenConnectionDialog = () => {
+    setIsConnectionDialogOpen(true);
+  };
+
+  const handleCloseConnectionDialog = () => {
+    setIsConnectionDialogOpen(false);
+  };
+
+  const handleConnect = (code) => {
+    console.log("Connecting with code:", code);
+    // TODO: Implement actual connection logic
+    setIsConnectionDialogOpen(false);
   };
 
   return (
@@ -88,7 +99,13 @@ const Home = () => {
           onSendFile={handleSendFile}
         />
 
-        <ConnectionArea onConnect={handleConnect} />
+        <ConnectionArea onConnect={handleOpenConnectionDialog} />
+
+        <ConnectionDialog
+          open={isConnectionDialogOpen}
+          onClose={handleCloseConnectionDialog}
+          onConnect={handleConnect}
+        />
       </Box>
     </Box>
   );
