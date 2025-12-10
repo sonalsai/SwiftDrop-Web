@@ -1,16 +1,62 @@
-import { Box } from "@mui/material";
-import { useState } from "react";
+import { Box, Typography, Button, LinearProgress } from "@mui/material";
+import { useState, useEffect } from "react";
 import {
   HeroSection,
   FileUploadZone,
   ConnectionArea,
   ConnectionDialog,
+  WaitingDialog,
+  ReceiveDialog,
 } from "../../shared/components";
+import { useWebRTC } from "../../shared/hooks/useWebRTC";
 
 const Home = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isConnectionDialogOpen, setIsConnectionDialogOpen] = useState(false);
+  const [isWaitingDialogOpen, setIsWaitingDialogOpen] = useState(false);
+
+  // WebRTC Hook
+  const {
+    joinRoom,
+    createRoom,
+    sendFile,
+    acceptFile,
+    rejectFile,
+    status,
+    receivedFile,
+    incomingFileOffer,
+    progress,
+    isConnected,
+    roomCode,
+    hasPeer,
+  } = useWebRTC();
+
+  useEffect(() => {
+    if (receivedFile) {
+      console.log("File received:", receivedFile);
+      // Automatically trigger download or show UI (now handled in ReceiveDialog)
+    }
+  }, [receivedFile]);
+
+  // When a peer joins, we wait for the DataChannel to open (isConnected) before sending
+  useEffect(() => {
+    if (isConnected && isWaitingDialogOpen) {
+      setIsWaitingDialogOpen(false);
+      // Auto-send since we were waiting for this connection
+      if (selectedFile) {
+        sendFile(selectedFile);
+      }
+    }
+  }, [isConnected, isWaitingDialogOpen, selectedFile, sendFile]);
+
+  // Optional: Update UI when peer is detected but not yet fully connected
+  useEffect(() => {
+    if (hasPeer && isWaitingDialogOpen && !isConnected) {
+      // We could potentially update the waiting dialog text here to say "Connecting..."
+      // For now, we rely on the dialog's code prop or we can pass a status prop to WaitingDialog
+    }
+  }, [hasPeer, isWaitingDialogOpen, isConnected]);
 
   const handleDragEnter = (e) => {
     e.preventDefault();
@@ -44,7 +90,10 @@ const Home = () => {
   };
 
   const handleSendFile = () => {
-    console.log("Sending file:", selectedFile);
+    if (selectedFile) {
+      createRoom();
+      setIsWaitingDialogOpen(true);
+    }
   };
 
   const handleOpenConnectionDialog = () => {
@@ -55,10 +104,58 @@ const Home = () => {
     setIsConnectionDialogOpen(false);
   };
 
+  const handleCloseWaitingDialog = () => {
+    setIsWaitingDialogOpen(false);
+    // TODO: Ideally leave room here
+  };
+
   const handleConnect = (code) => {
-    console.log("Connecting with code:", code);
-    // TODO: Implement actual connection logic
+    joinRoom(code);
     setIsConnectionDialogOpen(false);
+  };
+
+  const [receiveDialogOpen, setReceiveDialogOpen] = useState(false);
+  const [receiveStatus, setReceiveStatus] = useState("request"); // 'request' | 'receiving' | 'completed'
+
+  useEffect(() => {
+    if (incomingFileOffer) {
+      setReceiveDialogOpen(true);
+      setReceiveStatus("request");
+    }
+  }, [incomingFileOffer]);
+
+  // Update status to receiving if accepted
+  const handleAcceptFile = () => {
+    acceptFile();
+    setReceiveStatus("receiving");
+  };
+
+  const handleRejectFile = () => {
+    rejectFile();
+    setReceiveDialogOpen(false);
+    setReceiveStatus("request");
+  };
+
+  // Update status on completion
+  useEffect(() => {
+    if (receivedFile) {
+      setReceiveStatus("completed");
+      setReceiveDialogOpen(true); // Ensure it's open if it wasn't
+    }
+  }, [receivedFile]);
+
+  const handleDownloadFile = () => {
+    if (receivedFile?.url) {
+      const a = document.createElement("a");
+      a.href = receivedFile.url;
+      a.download = receivedFile.name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // Optional: Close dialog after download
+      // setReceiveDialogOpen(false);
+    }
   };
 
   return (
@@ -105,6 +202,27 @@ const Home = () => {
           open={isConnectionDialogOpen}
           onClose={handleCloseConnectionDialog}
           onConnect={handleConnect}
+        />
+
+        <WaitingDialog
+          open={isWaitingDialogOpen}
+          onClose={handleCloseWaitingDialog}
+          code={roomCode}
+          hasPeer={hasPeer}
+        />
+
+        <ReceiveDialog
+          open={receiveDialogOpen}
+          fileName={
+            receivedFile ? receivedFile.name : incomingFileOffer?.filename
+          }
+          fileSize={incomingFileOffer?.size} // We might lose size ref on complete, checking...
+          progress={progress}
+          status={receiveStatus}
+          onAccept={handleAcceptFile}
+          onReject={handleRejectFile}
+          onDownload={handleDownloadFile}
+          onClose={() => setReceiveDialogOpen(false)}
         />
       </Box>
     </Box>
