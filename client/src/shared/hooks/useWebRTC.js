@@ -28,7 +28,7 @@ export const useWebRTC = () => {
 
     const log = (msg) => {
         setStatus(msg);
-        console.log("[WebRTC]", msg);
+        // console.log("[WebRTC]", msg);
     };
 
     const generateRoomCode = () => {
@@ -294,6 +294,16 @@ export const useWebRTC = () => {
 
         ws.current.onclose = () => log("Signaling disconnected");
     };
+
+    // Wake up the signaling server (Render cold start)
+    useEffect(() => {
+        const httpUrl = WS_SIGNALING_URL.replace("ws://", "http://").replace("wss://", "https://");
+        // console.log("Waking up server at:", httpUrl);
+        fetch(httpUrl)
+            .then(res => res.text())
+            // .then(txt => console.log("Server awake:", txt))
+            .catch(err => console.error("Server wake-up failed:", err));
+    }, []);
 
     const sendFile = (file) => {
         if (!file || !dataChannel.current || dataChannel.current.readyState !== "open") {

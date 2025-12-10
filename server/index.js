@@ -1,3 +1,4 @@
+const http = require("http");
 const WebSocket = require("ws");
 const pino = require("pino");
 
@@ -12,12 +13,42 @@ const logger = pino({
     },
 });
 
-const server = new WebSocket.Server({ port: 3001 });
+const PORT = process.env.PORT || 3001;
+
+const server = http.createServer((req, res) => {
+    // Add CORS headers
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+    if (req.method === "OPTIONS") {
+        res.writeHead(204);
+        res.end();
+        return;
+    }
+
+    if (req.method === "GET" && req.url === "/") {
+        res.writeHead(200, { "Content-Type": "text/plain" });
+        res.end("Signaling Server Running");
+    } else {
+        res.writeHead(404);
+        res.end();
+    }
+});
+
+// Attach WebSocket server to HTTP server
+const wss = new WebSocket.Server({ server });
 const rooms = new Map(); // roomId -> Set(ws)
 
-logger.info("Signaling server starting on port 3001");
+logger.info(`Signaling server starting on port ${PORT}`);
 
-server.on("connection", (ws, req) => {
+// Start listening
+server.listen(PORT, () => {
+    logger.info(`Server listening on port ${PORT}`);
+});
+
+wss.on("connection", (ws, req) => {
+    // ... existing connection logic ...
     const ip = req.socket.remoteAddress;
     logger.info({ ip }, "New WebSocket connection established");
 

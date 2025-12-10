@@ -34,7 +34,7 @@ const Home = () => {
 
   useEffect(() => {
     if (receivedFile) {
-      console.log("File received:", receivedFile);
+      // console.log("File received:", receivedFile);
       // Automatically trigger download or show UI (now handled in ReceiveDialog)
     }
   }, [receivedFile]);
