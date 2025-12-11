@@ -792,13 +792,17 @@ HOST (Initiator)                           GUEST (Answerer)
       │                                          │
       ├─ setRemoteDescription(answer)            │
       │                                          │
-      ├─ onicecandidate fires ──────────────────►│
-      │   └─ ws.send({type:"ice",payload:cand})  ├─ addIceCandidate(cand)
+      ├─ onicecandidate fires                    │
+      │   └─ ws.send({type:"ice",payload:cand})  │
+      │        (via signaling server) ──────────►├─ addIceCandidate(cand)
       │                                          │
-      │◄─────────────────────onicecandidate fires┤
-      ├─ addIceCandidate(cand)                   │   └─ ws.send({type:"ice"})
+      │                                          ├─ onicecandidate fires
+      │                                          │   └─ ws.send({type:"ice",payload:cand})
+      │        (via signaling server) ◄──────────┤
+      ├─ addIceCandidate(cand)                   │
       │                                          │
-      ├─ ondatachannel fires on GUEST ──────────►├─ dataChannel received
+      │                                          ├─ ondatachannel fires
+      │                                          ├─ dataChannel received
       │                                          ├─ setupDataChannel()
       │                                          ├─ channel.onopen fires
       │                                          └─ setIsConnected(true)
@@ -822,11 +826,17 @@ Peer A                          Signaling Server                     Peer B
   ├─ onicecandidate ───────────────────┼──► broadcast ──────────────────►│
   │   (srflx candidate via STUN)       │                                 ├─ addIceCandidate()
   │                                    │                                 │
-  │◄──────────────────────onicecandidate────────────────────────────────┤
-  ├─ addIceCandidate()                 │   (host candidate)              │
+  │                                    │                                 ├─ onicecandidate
+  │                                    │◄────────────────────────────────┤   └─ send({type:"ice"})
+  │                                    │   (host candidate)              │
+  │◄───────────────────────broadcast───┤                                 │
+  ├─ addIceCandidate()                 │                                 │
   │                                    │                                 │
-  │◄──────────────────────onicecandidate────────────────────────────────┤
-  ├─ addIceCandidate()                 │   (srflx candidate)             │
+  │                                    │                                 ├─ onicecandidate
+  │                                    │◄────────────────────────────────┤   └─ send({type:"ice"})
+  │                                    │   (srflx candidate)             │
+  │◄───────────────────────broadcast───┤                                 │
+  ├─ addIceCandidate()                 │                                 │
   │                                    │                                 │
   ├─ onicecandidate(null) ─────────────┼─────────────────────────────────│
   │   (gathering complete)             │                                 │
@@ -1731,6 +1741,7 @@ USER A (Host/Sender)          SIGNALING SERVER          USER B (Guest/Receiver)
        │                              │                            │
        │                              │                            ├─ onicecandidate ──────►
        │                              │◄───────────────────────────┤  └─ send({type:"ice"})
+       │                              ├─ broadcast ───────────────►│
        │◄─────────────────────────────┤                            │
        ├─ addIceCandidate()           │                            │
        │                              │                            │
