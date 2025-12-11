@@ -197,8 +197,8 @@ const Home = () => {
       }}
     >
       <HeroSection
-        title="Instant Peer-to-Peer Sharing"
-        subtitle="Share files instantly via secure P2P connection. No uploads, no limits, just pure speed."
+        title="Share Files Instantly. No Uploads, No Limits."
+        subtitle="Direct P2P transfers between devices—fast, private, and cloud-free."
       />
 
       <Box
