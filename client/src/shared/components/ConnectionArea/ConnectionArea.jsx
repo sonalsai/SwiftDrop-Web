@@ -7,8 +7,8 @@ const ConnectionArea = ({ onConnect }) => {
     <Box
       sx={{
         width: "100%",
-        height: "360px",
-        padding: "32px",
+        height: { xs: "auto", md: "360px" },
+        padding: { xs: "24px", md: "32px" },
         borderRadius: "20px",
         backgroundColor: "#F9FBFF",
         border: "2px dashed #D8E3F0",

@@ -34,8 +34,8 @@ const FileUploadZone = ({
       elevation={0}
       sx={{
         width: "100%",
-        height: "360px",
-        padding: "32px",
+        height: { xs: "auto", md: "360px" },
+        padding: { xs: "24px", md: "32px" },
         borderRadius: "20px",
         border: `2px dashed ${
           isDragging ? "var(--primary-blue)" : "var(--border-light)"

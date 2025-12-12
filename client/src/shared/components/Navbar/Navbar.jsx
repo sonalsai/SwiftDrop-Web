@@ -1,5 +1,15 @@
-import { SendOutlined } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Menu as MenuIcon, Close } from "@mui/icons-material";
+import logo from "../../../assets/images/logo.png";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -17,6 +27,7 @@ const Navbar = () => {
 
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,6 +56,82 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
 
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const drawer = (
+    <Box
+      onClick={handleDrawerToggle}
+      sx={{ textAlign: "center", padding: "20px" }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: "32px",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+          }}
+        >
+          <img
+            src={logo}
+            alt="SwiftDrop"
+            style={{ width: "36px", height: "36px" }}
+          />
+          <Typography
+            variant="h6"
+            sx={{
+              background:
+                "linear-gradient(135deg, var(--text-dark) 0%, #3e4e68 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontFamily: "var(--font-primary)",
+              fontWeight: 800,
+            }}
+          >
+            SwiftDrop
+          </Typography>
+        </Box>
+
+        <IconButton
+          onClick={handleDrawerToggle}
+          sx={{ color: "var(--text-secondary)" }}
+        >
+          <Close />
+        </IconButton>
+      </Box>
+
+      <List>
+        {navItems.map((item) => (
+          <ListItem key={item.path} disablePadding>
+            <ListItemButton
+              onClick={() => navigate(item.path)}
+              sx={{
+                textAlign: "center",
+                borderRadius: "12px",
+                backgroundColor: isActive(item.path)
+                  ? "rgba(13, 71, 161, 0.08)"
+                  : "transparent",
+                color: isActive(item.path)
+                  ? "var(--primary-blue)"
+                  : "var(--text-dark)",
+              }}
+            >
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
   return (
     <Box
       component="nav"
@@ -65,7 +152,7 @@ const Navbar = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "16px 32px",
+          padding: { xs: "12px 16px", md: "16px 32px" }, // Responsive Padding
           maxWidth: "1440px",
           margin: "0 auto",
           width: "100%",
@@ -77,7 +164,7 @@ const Navbar = () => {
           sx={{
             display: "flex",
             alignItems: "center",
-            gap: "12px",
+            // gap: "4px",
             cursor: "pointer",
             transition: "transform 0.2s ease",
             "&:hover": {
@@ -85,27 +172,11 @@ const Navbar = () => {
             },
           }}
         >
-          <Box
-            sx={{
-              width: "42px",
-              height: "42px",
-              borderRadius: "12px",
-              background:
-                "linear-gradient(135deg, var(--primary-blue) 0%, #0D47A1 100%)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0 4px 12px rgba(26, 115, 232, 0.3)",
-            }}
-          >
-            <SendOutlined
-              sx={{
-                color: "white",
-                fontSize: 22,
-                transform: "rotate(-45deg) translate(2px, 0)",
-              }}
-            />
-          </Box>
+          <img
+            src={logo}
+            alt="SwiftDrop"
+            style={{ width: "42px", height: "42px" }}
+          />
           <Typography
             variant="h5"
             sx={{
@@ -122,10 +193,10 @@ const Navbar = () => {
           </Typography>
         </Box>
 
-        {/* Navigation Links */}
+        {/* Desktop Navigation */}
         <Box
           sx={{
-            display: "flex",
+            display: { xs: "none", md: "flex" },
             gap: "8px",
             alignItems: "center",
             backgroundColor: "rgba(0, 0, 0, 0.03)",
@@ -166,7 +237,39 @@ const Navbar = () => {
             );
           })}
         </Box>
+
+        {/* Mobile Hamburger Menu */}
+        <IconButton
+          color="inherit"
+          aria-label="open drawer"
+          edge="start"
+          onClick={handleDrawerToggle}
+          sx={{ display: { md: "none" } }}
+        >
+          <MenuIcon sx={{ color: "var(--text-dark)" }} />
+        </IconButton>
       </Box>
+
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="right"
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: 240,
+            borderRadius: "20px 0 0 20px",
+          },
+        }}
+      >
+        {drawer}
+      </Drawer>
     </Box>
   );
 };
