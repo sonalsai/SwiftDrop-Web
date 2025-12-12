@@ -7,8 +7,8 @@ const ConnectionArea = ({ onConnect }) => {
     <Box
       sx={{
         width: "100%",
-        height: "424px",
-        padding: "64px 48px",
+        height: "360px",
+        padding: "32px",
         borderRadius: "20px",
         backgroundColor: "#F9FBFF",
         border: "2px dashed #D8E3F0",
@@ -33,7 +33,7 @@ const ConnectionArea = ({ onConnect }) => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          mb: 3,
+          mb: 2,
           transition: "0.3s ease",
           "&:hover": {
             transform: "scale(1.08)",
@@ -60,7 +60,7 @@ const ConnectionArea = ({ onConnect }) => {
       <Typography
         sx={{
           color: "#6A7B91",
-          marginBottom: "32px",
+          marginBottom: "24px",
           fontSize: "15px",
           textAlign: "center",
           maxWidth: "80%",

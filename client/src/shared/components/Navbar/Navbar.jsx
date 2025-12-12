@@ -1,6 +1,7 @@
 import { SendOutlined } from "@mui/icons-material";
 import { Box, Typography } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -14,6 +15,36 @@ const Navbar = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // At the top, always show
+      if (currentScrollY <= 0) {
+        setIsVisible(true);
+        setLastScrollY(currentScrollY);
+        return;
+      }
+
+      // Determine scroll direction
+      if (currentScrollY > lastScrollY) {
+        // Scrolling DOWN -> Show
+        setIsVisible(true);
+      } else if (currentScrollY < lastScrollY) {
+        // Scrolling UP -> Hide
+        setIsVisible(false);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   return (
     <Box
       component="nav"
@@ -25,6 +56,8 @@ const Navbar = () => {
         backdropFilter: "blur(12px)",
         borderBottom: "1px solid rgba(230, 235, 240, 0.6)",
         boxShadow: "0 4px 20px rgba(0, 0, 0, 0.02)",
+        transition: "transform 0.3s ease-in-out",
+        transform: isVisible ? "translateY(0)" : "translateY(-100%)",
       }}
     >
       <Box

@@ -34,8 +34,8 @@ const FileUploadZone = ({
       elevation={0}
       sx={{
         width: "100%",
-        height: "424px",
-        padding: "64px 48px",
+        height: "360px",
+        padding: "32px",
         borderRadius: "20px",
         border: `2px dashed ${
           isDragging ? "var(--primary-blue)" : "var(--border-light)"
@@ -51,6 +51,9 @@ const FileUploadZone = ({
           ? "0 12px 32px var(--shadow-lg)"
           : "0 4px 16px var(--shadow-sm)",
         transform: isDragging ? "scale(1.02)" : "scale(1)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       <input
@@ -66,14 +69,15 @@ const FileUploadZone = ({
           flexDirection: "column",
           alignItems: "center",
           gap: "24px",
+          width: "100%",
         }}
       >
         {/* Upload Icon */}
         <Box
           className="upload-icon"
           sx={{
-            width: "120px",
-            height: "120px",
+            width: "100px",
+            height: "100px",
             borderRadius: "50%",
             background:
               "linear-gradient(135deg, var(--primary-blue) 0%, #0D47A1 100%)",
@@ -84,7 +88,7 @@ const FileUploadZone = ({
             boxShadow: "0 8px 24px rgba(26, 115, 232, 0.3)",
           }}
         >
-          <FileUploadOutlined sx={{ fontSize: 64, color: "white" }} />
+          <FileUploadOutlined sx={{ fontSize: 48, color: "white" }} />
         </Box>
 
         {/* FILE SELECTED UI */}

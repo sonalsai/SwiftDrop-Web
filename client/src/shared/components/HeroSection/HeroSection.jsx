@@ -6,10 +6,11 @@ const HeroSection = ({ title, subtitle }) => {
     <Box
       sx={{
         textAlign: "center",
-        padding: "64px 32px 32px",
+        padding: "24px 32px 16px",
         maxWidth: "1200px",
         margin: "0 auto",
         width: "100%",
+        marginTop: "16px",
       }}
     >
       <Typography
@@ -19,8 +20,8 @@ const HeroSection = ({ title, subtitle }) => {
           fontFamily: "var(--font-primary)",
           fontWeight: "var(--font-weight-bold)",
           letterSpacing: "-1px",
-          marginBottom: "16px",
-          fontSize: { xs: "2.5rem", md: "3.5rem" },
+          marginBottom: "8px",
+          fontSize: { xs: "2rem", md: "2.5rem" },
         }}
       >
         {title}
@@ -32,7 +33,8 @@ const HeroSection = ({ title, subtitle }) => {
           fontWeight: "var(--font-weight-normal)",
           maxWidth: "600px",
           margin: "0 auto",
-          lineHeight: 1.6,
+          lineHeight: 1.5,
+          fontSize: "1rem",
         }}
       >
         {subtitle}
