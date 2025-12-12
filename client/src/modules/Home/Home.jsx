@@ -197,21 +197,22 @@ const Home = () => {
       }}
     >
       <HeroSection
-        title="Share Files Instantly. No Uploads, No Limits."
-        subtitle="Direct P2P transfers between devices—fast, private, and cloud-free."
+        title="Fast File Sharing for Everyone"
+        subtitle="A simple way to share your files with anyone, anywhere."
       />
 
       <Box
         sx={{
           flex: 1,
           display: "flex",
-          flexDirection: "row",
+          flexDirection: { xs: "column", md: "row" },
           alignItems: "center",
-          padding: "32px",
-          maxWidth: "1440px",
+          justifyContent: "center",
+          padding: "16px",
+          maxWidth: "1200px",
           margin: "0 auto",
           width: "100%",
-          gap: "32px",
+          gap: "24px",
         }}
       >
         <FileUploadZone
